@@ -353,9 +353,9 @@
       `<p class="pista-bloqueo"><svg class="ico"><use href="#i-info"/></svg>Escribe el nombre y el apellido para continuar</p>` +
       `<div class="fila-edad">` +
       `<label class="campo"><span>Edad</span><input name="edad" type="number" inputmode="numeric" min="5" max="110" value="${esc(h.edad || '')}"></label>` +
-      `<label class="campo"><span>Parroquia a la que pertenece</span><input name="parroquia" list="lista-parroquias" maxlength="100" value="${esc(h.parroquia || '')}"></label>` +
-      `</div>` +
       `<label class="campo"><span>Comunidad</span><input name="comunidad" list="lista-comunidades" maxlength="60" placeholder="Ej.: 1ª Comunidad" value="${esc(h.comunidad || '')}"></label>` +
+      `</div>` +
+      `<label class="campo"><span>Parroquia a la que pertenece</span><input name="parroquia" list="lista-parroquias" maxlength="100" value="${esc(h.parroquia || '')}"></label>` +
       `</div></fieldset>`
     );
   }
