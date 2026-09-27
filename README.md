@@ -68,9 +68,10 @@ firebase: {
 
 ### 6. Publicar la app (GitHub Pages, gratis)
 1. Une esta rama a `main` (o sube los archivos a `main`).
-2. En GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `(root)` → Save**.
-3. En uno o dos minutos la app queda en `https://<tu-usuario>.github.io/<nombre-del-repositorio>/`. Ese es el enlace para compartir por WhatsApp.
-4. En Firebase: **Authentication → Configuración → Dominios autorizados → Agregar dominio** → `<tu-usuario>.github.io`.
+2. Si el repositorio es **privado**, GitHub Pages gratis no está disponible: hazlo público en **Settings → General → Danger Zone → Change repository visibility → Change to public**. Solo se verá el código de la app; los datos de los hermanos quedan en Firebase, protegidos por las reglas.
+3. En GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `(root)` → Save**.
+4. En uno o dos minutos la app queda en `https://<tu-usuario>.github.io/<nombre-del-repositorio>/`. Ese es el enlace para compartir por WhatsApp.
+5. En Firebase: **Authentication → Configuración → Dominios autorizados → Agregar dominio** → `<tu-usuario>.github.io`.
 
 ### 7. Crear el administrador
 1. Abre la app → **Administrador**.
