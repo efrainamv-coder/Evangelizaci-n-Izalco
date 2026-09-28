@@ -25,8 +25,8 @@ window.APP_CONFIG = {
   titulo: 'Evangelización Izalco',
   subtitulo: 'Camino Neocatecumenal · Parroquia Nuestra Señora de los Dolores',
 
-  // Punto donde abre el mapa (Izalco, Sonsonate) y nivel de acercamiento
-  centro: [13.74472, -89.67306],
+  // Punto donde abre el mapa (la parroquia, en Izalco) y nivel de acercamiento
+  centro: [13.75071, -89.67377],
   zoom: 16,
 
   // Acceso del administrador SOLO en modo demostración.

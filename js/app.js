@@ -12,7 +12,7 @@
     {
       titulo: 'Evangelización Izalco',
       subtitulo: 'Camino Neocatecumenal · Parroquia Nuestra Señora de los Dolores',
-      centro: [13.74472, -89.67306],
+      centro: [13.75071, -89.67377],
       zoom: 16,
       adminDemo: { usuario: 'admin', clave: 'izalco' }
     },
@@ -655,7 +655,10 @@
       if (s && s.rol === 'admin') ir('mapa', true);
       else enrutar();
     } catch (err) {
-      $('#adm-error').textContent = mensajeError(err);
+      $('#adm-error').textContent =
+        err.codigo === 'credenciales' && est.backend.modo === 'firebase'
+          ? 'Correo o contraseña incorrectos. Si todavía no creaste la cuenta del administrador, toca «Crear la cuenta del administrador» aquí abajo.'
+          : mensajeError(err);
     } finally {
       est.ocupado = false;
       $('#adm-enviar').disabled = false;
@@ -665,7 +668,7 @@
     const correo = $('#adm-usuario').value.trim();
     const clave = $('#adm-clave').value;
     if (!correo.includes('@') || clave.length < 6) {
-      $('#adm-error').textContent = 'Escribe un correo y una contraseña de al menos 6 caracteres; luego toca «crear la cuenta».';
+      $('#adm-error').textContent = 'Escribe arriba un correo y una contraseña de al menos 6 caracteres; luego toca «Crear la cuenta del administrador».';
       return;
     }
     const ok = await confirmar('¿Crear la cuenta del administrador?', `Se creará la cuenta ${correo}. Después tendrás que darle permiso de administrador en la consola de Firebase (te mostraremos cómo).`, { si: 'Crear cuenta' });
@@ -851,7 +854,14 @@
     if (s.rol === 'admin') {
       est.subs.push(b.escucharEquipos((v) => { est.equipos = v || {}; programarRender(); }, alError));
       est.subs.push(b.escucharSalidas((v) => { est.salidas = v || {}; programarRender(); }, alError));
-      if (b.inicializarZonas) b.inicializarZonas().then((hecho) => hecho && toast('Se cargaron las zonas iniciales (aproximadas).'));
+      if (b.inicializarZonas) {
+        b.inicializarZonas()
+          .then((r) => {
+            if (r === 'cargadas') toast('Se cargaron las zonas iniciales.');
+            if (r === 'corregidas') toast('Se corrigió la ubicación de las zonas iniciales: ahora coinciden con Google Maps.', { tipo: 'ok' });
+          })
+          .catch(() => {});
+      }
     }
     est.relojes.push(setInterval(() => programarRender(), 15000));
     est.relojes.push(setInterval(() => publicarUbicacion(false), 20000));
@@ -1762,7 +1772,7 @@
     const marcas = Object.values(est.marcas || {}).filter(Boolean);
     ponerHTML($('#vista-zonas'),
       `<div class="vista-contenido"><h2>Zonas de evangelización</h2>` +
-      `<div class="aviso aviso-info"><svg class="ico"><use href="#i-info"/></svg><div>Verde = ya se visitó · Naranja = próxima a visitar. Las dos zonas iniciales se trazaron a partir de las capturas y son <b>aproximadas</b>: usa <b>Editar forma</b> para ajustarlas a las calles (puedes arrastrar toda la zona desde el centro).</div></div>` +
+      `<div class="aviso aviso-info"><svg class="ico"><use href="#i-info"/></svg><div>Verde = ya se visitó · Naranja = próxima a visitar. Las dos zonas iniciales se ubicaron con Google Maps, tomando la parroquia como referencia. Si alguna esquina no coincide con la calle, usa <b>Editar forma</b> (también puedes arrastrar toda la zona desde el centro).</div></div>` +
       `<button type="button" class="btn btn-grande" data-accion="nueva-zona" style="margin-bottom:14px"><svg class="ico"><use href="#i-mas"/></svg>Nueva zona</button>` +
       (zonas.length
         ? zonas
@@ -1808,7 +1818,7 @@
     est.firmaZonas = '';
     renderZonasMapa();
     const e = IZ.ESTADOS_ZONA[z.estado] || IZ.ESTADOS_ZONA.pendiente;
-    est.mapa.iniciarEdicionZona(z.puntos, e.color, () => {});
+    est.mapa.iniciarEdicionZona(z.puntos, e.color, () => actualizarPanelEdicion());
     actualizarPanelEdicion();
   }
   function actualizarPanelEdicion(n) {
@@ -1824,8 +1834,15 @@
         `<button type="button" class="btn btn-sec" data-ed="cancelar">Cancelar</button>` +
         `<button type="button" class="btn btn-verde" data-ed="terminar"${n >= 3 ? '' : ' disabled'}><svg class="ico"><use href="#i-check"/></svg>Terminar</button>`;
     } else {
-      $('#edicion-texto').textContent = 'Arrastra los puntos blancos para ajustar. Toca «+» para agregar un punto y arrastra el centro para mover toda la zona.';
+      const inicial = zonaInicial(zm.id);
+      const guardada = est.zonas[zm.id];
+      const esInicial = !!inicial && u.mismosPuntos(est.mapa.puntosEdicion(), inicial.puntos);
+      $('#edicion-texto').textContent =
+        esInicial && guardada && !u.mismosPuntos(guardada.puntos, inicial.puntos)
+          ? 'Esta es la forma inicial, ubicada con Google Maps. Toca «Guardar forma» para conservarla.'
+          : 'Arrastra los puntos blancos para ajustar. Toca «+» para agregar un punto y arrastra el centro para mover toda la zona.';
       botones.innerHTML =
+        (inicial && !esInicial ? `<button type="button" class="btn btn-sec" data-ed="forma-inicial"><svg class="ico"><use href="#i-deshacer"/></svg>Forma inicial</button>` : '') +
         `<button type="button" class="btn btn-sec" data-ed="cancelar">Cancelar</button>` +
         `<button type="button" class="btn btn-verde" data-ed="guardar-forma"><svg class="ico"><use href="#i-check"/></svg>Guardar forma</button>`;
     }
@@ -1841,6 +1858,14 @@
       if (puntos.length < 3) return;
       await cerrarHasta(zm.capa);
       return abrirFormZona(null, puntos);
+    }
+    if (accion === 'forma-inicial') {
+      const inicial = zonaInicial(zm.id);
+      const z = est.zonas[zm.id];
+      if (!inicial || !z) return;
+      const e = IZ.ESTADOS_ZONA[z.estado] || IZ.ESTADOS_ZONA.pendiente;
+      est.mapa.iniciarEdicionZona(inicial.puntos, e.color, () => actualizarPanelEdicion());
+      return actualizarPanelEdicion();
     }
     if (accion === 'guardar-forma') {
       const z = est.zonas[zm.id];
@@ -1876,6 +1901,10 @@
         history.back();
       }
     }
+  }
+  /** Zona inicial (ubicada con Google Maps) con ese id, si la hay. */
+  function zonaInicial(id) {
+    return (IZ.ZONAS_INICIALES || []).find((z) => z.id === id) || null;
   }
   function limpiarZona(z) {
     const r = { nombre: u.recortar(z.nombre, 80) || 'Zona', estado: IZ.ESTADOS_ZONA[z.estado] ? z.estado : 'pendiente', puntos: (z.puntos || []).map((p) => [u.redondear(p[0]), u.redondear(p[1])]) };

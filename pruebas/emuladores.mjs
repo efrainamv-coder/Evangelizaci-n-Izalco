@@ -36,5 +36,5 @@ export async function dbLeer(ruta) {
 export const CONFIG_EMULADORES = `window.APP_CONFIG = {
   firebase: { apiKey: 'demo-key', authDomain: '${PROYECTO}.firebaseapp.com', databaseURL: 'https://${NS}.firebaseio.com', projectId: '${PROYECTO}', appId: '1:1:web:1' },
   emuladores: { auth: '${AUTH}', dbHost: '127.0.0.1', dbPuerto: 9000 },
-  titulo: 'Evangelización Izalco', centro: [13.74472, -89.67306], zoom: 16
+  titulo: 'Evangelización Izalco', centro: [13.75071, -89.67377], zoom: 16
 };`;

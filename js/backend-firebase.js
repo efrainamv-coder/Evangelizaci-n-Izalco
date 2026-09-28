@@ -382,21 +382,40 @@
           throw traducir(e);
         }
       },
-      /** La primera vez que entra el administrador se cargan las zonas iniciales. */
+      /**
+       * La primera vez que entra el administrador se cargan las zonas iniciales ('cargadas').
+       * Si todavía tienen la forma mal ubicada de la primera versión, se corrigen ('corregidas').
+       */
       async inicializarZonas() {
         try {
           const pub = (await get(ref(db, 'config/publica'))).val() || {};
-          if (pub.zonasIniciadas) return false;
-          const actuales = await get(ref(db, 'zonas'));
-          const cambios = { 'config/publica/zonasIniciadas': true };
-          if (!actuales.exists()) {
-            (IZ.ZONAS_INICIALES || []).forEach((z) => {
-              const { id, ...resto } = z;
-              cambios['zonas/' + id] = Object.assign({}, resto, { actualizado: TS() });
-            });
+          if (!pub.zonasIniciadas) {
+            const actuales = await get(ref(db, 'zonas'));
+            const cambios = { 'config/publica/zonasIniciadas': true };
+            if (!actuales.exists()) {
+              (IZ.ZONAS_INICIALES || []).forEach((z) => {
+                const { id, ...resto } = z;
+                cambios['zonas/' + id] = Object.assign({}, resto, { actualizado: TS() });
+              });
+            }
+            await update(ref(db), cambios);
+            return actuales.exists() ? false : 'cargadas';
           }
+          const cambios = {};
+          const anteriores = IZ.ZONAS_INICIALES_ANTERIORES || {};
+          await Promise.all(
+            (IZ.ZONAS_INICIALES || [])
+              .filter((z) => anteriores[z.id])
+              .map(async (z) => {
+                const guardados = (await get(ref(db, 'zonas/' + z.id + '/puntos'))).val();
+                if (!u.mismosPuntos(guardados, anteriores[z.id])) return;
+                cambios['zonas/' + z.id + '/puntos'] = z.puntos;
+                cambios['zonas/' + z.id + '/actualizado'] = TS();
+              })
+          );
+          if (!Object.keys(cambios).length) return false;
           await update(ref(db), cambios);
-          return true;
+          return 'corregidas';
         } catch (e) {
           console.warn('No se pudieron iniciar las zonas', e);
           return false;
