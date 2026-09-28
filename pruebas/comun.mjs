@@ -10,6 +10,8 @@ export const RAIZ = path.resolve(AQUI, '..');
 export const PUERTO = Number(process.env.PUERTO || 8080);
 export const BASE = `http://127.0.0.1:${PUERTO}/`;
 export const SALIDA = path.join(AQUI, 'capturas');
+/** config.js para el modo demostración (sin Firebase), aunque el config.js real ya tenga Firebase. */
+export const CONFIG_DEMO = "window.APP_CONFIG = { firebase: null, adminDemo: { usuario: 'admin', clave: 'izalco' } };";
 fs.mkdirSync(SALIDA, { recursive: true });
 const FIREBASE_JS = path.join(AQUI, 'node_modules', 'firebase');
 

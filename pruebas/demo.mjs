@@ -1,14 +1,14 @@
 // Pruebas del MODO DEMOSTRACIÓN (sin Firebase): registro, círculos, tiempo real entre pestañas,
 // visualizador, administrador y descargas.
 import fs from 'fs';
-import { nuevoNavegador, nuevoContexto, vigilar, BASE, SALIDA, afirmar, esperar } from './comun.mjs';
+import { nuevoNavegador, nuevoContexto, vigilar, BASE, SALIDA, afirmar, esperar, CONFIG_DEMO } from './comun.mjs';
 import { registrar, terminarRegistro, agregarCirculo, esperarQue, tocarMapa, tocarCirculo } from './flujos.mjs';
 
 export default async function pruebaDemo() {
   const nav = await nuevoNavegador();
   const errores = [];
   try {
-    const ctx = await nuevoContexto(nav);
+    const ctx = await nuevoContexto(nav, { config: CONFIG_DEMO });
 
     // ---------- Inicio y registro paso a paso ----------
     const p = await ctx.newPage();
