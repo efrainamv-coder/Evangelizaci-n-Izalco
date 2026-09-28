@@ -1,0 +1,149 @@
+{
+  "rules": {
+    "config": {
+      "publica": {
+        ".read": true,
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+        "requiereCodigo": { ".validate": "newData.isBoolean()" },
+        "zonasIniciadas": { ".validate": "newData.isBoolean()" },
+        "$otro": { ".validate": false }
+      }
+    },
+
+    "secreto": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "codigo": { ".validate": "newData.isString() && newData.val().length >= 3 && newData.val().length <= 40" },
+      "$otro": { ".validate": false }
+    },
+
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "miembros": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && ((auth.uid === $uid && !data.exists() && newData.exists() && (!root.child('secreto/codigo').exists() || newData.child('codigo').val() === root.child('secreto/codigo').val())) || root.child('admins').child(auth.uid).val() === true)",
+        ".validate": "newData.hasChildren(['rol', 't']) && (newData.child('rol').val() === 'visor' || auth.provider !== 'anonymous')",
+        "rol": { ".validate": "newData.val() === 'equipo' || newData.val() === 'visor'" },
+        "codigo": { ".validate": "newData.isString() && newData.val().length <= 40" },
+        "t": { ".validate": "newData.isNumber()" },
+        "$otro": { ".validate": false }
+      }
+    },
+
+    "equipos": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && ((auth.uid === $uid && auth.provider === 'password' && root.child('miembros').child(auth.uid).exists()) || root.child('admins').child(auth.uid).val() === true)",
+        ".validate": "newData.hasChildren(['usuario', 'fecha', 'solo', 'miembros', 'creado'])",
+        "usuario": { ".validate": "newData.isString() && newData.val().length <= 60 && newData.val().matches(/^[a-z0-9.]+$/) && (auth.uid !== $uid || auth.token.email.beginsWith(newData.val() + '@'))" },
+        "fecha": { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)" },
+        "solo": { ".validate": "newData.isBoolean()" },
+        "miembros": {
+          "$i": {
+            ".validate": "($i === '0' || $i === '1' || $i === '2') && newData.hasChildren(['nombre', 'apellido'])",
+            "nombre": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60" },
+            "apellido": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60" },
+            "edad": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 120" },
+            "parroquia": { ".validate": "newData.isString() && newData.val().length <= 100" },
+            "comunidad": { ".validate": "newData.isString() && newData.val().length <= 60" },
+            "$otro": { ".validate": false }
+          }
+        },
+        "creado": { ".validate": "newData.isNumber()" },
+        "actualizado": { ".validate": "newData.isNumber()" },
+        "$otro": { ".validate": false }
+      }
+    },
+
+    "salidas": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$id": {
+        ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid && root.child('equipos').child(auth.uid).exists()) || root.child('admins').child(auth.uid).val() === true)",
+        ".validate": "newData.hasChildren(['uid', 'usuario', 'fecha', 'solo', 'miembros', 'creado'])",
+        "uid": { ".validate": "newData.isString()" },
+        "usuario": { ".validate": "newData.isString() && newData.val().length <= 60" },
+        "fecha": { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)" },
+        "solo": { ".validate": "newData.isBoolean()" },
+        "miembros": {
+          "$i": {
+            ".validate": "($i === '0' || $i === '1' || $i === '2') && newData.hasChildren(['nombre', 'apellido'])",
+            "nombre": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60" },
+            "apellido": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60" },
+            "edad": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 120" },
+            "parroquia": { ".validate": "newData.isString() && newData.val().length <= 100" },
+            "comunidad": { ".validate": "newData.isString() && newData.val().length <= 60" },
+            "$otro": { ".validate": false }
+          }
+        },
+        "creado": { ".validate": "newData.isNumber()" },
+        "$otro": { ".validate": false }
+      }
+    },
+
+    "marcas": {
+      ".read": "auth != null && (root.child('miembros').child(auth.uid).exists() || root.child('admins').child(auth.uid).val() === true)",
+      "$id": {
+        ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true || (root.child('equipos').child(auth.uid).exists() && (!data.exists() || data.child('uid').val() === auth.uid) && (!newData.exists() || newData.child('uid').val() === auth.uid)))",
+        ".validate": "newData.hasChildren(['uid', 'usuario', 'tipo', 'lat', 'lng', 'fecha', 'creado'])",
+        "uid": { ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())" },
+        "usuario": { ".validate": "newData.isString() && newData.val().length <= 60 && (root.child('admins').child(auth.uid).val() === true || auth.token.email.beginsWith(newData.val() + '@'))" },
+        "equipo": { ".validate": "newData.isString() && newData.val().length <= 200" },
+        "tipo": { ".validate": "newData.val() === 'casa' || newData.val() === 'persona' || newData.val() === 'volver' || newData.val() === 'ausente' || newData.val() === 'rechazo'" },
+        "lat": { ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90" },
+        "lng": { ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180" },
+        "personas": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 500" },
+        "nota": { ".validate": "newData.isString() && newData.val().length <= 500" },
+        "fecha": { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)" },
+        "creado": { ".validate": "newData.isNumber()" },
+        "actualizado": { ".validate": "newData.isNumber()" },
+        "$otro": { ".validate": false }
+      }
+    },
+
+    "ubicaciones": {
+      ".read": "auth != null && (root.child('miembros').child(auth.uid).exists() || root.child('admins').child(auth.uid).val() === true)",
+      "$uid": {
+        ".write": "auth != null && ((auth.uid === $uid && root.child('equipos').child(auth.uid).exists()) || root.child('admins').child(auth.uid).val() === true)",
+        "$disp": {
+          ".validate": "$disp.length <= 40 && newData.hasChildren(['lat', 'lng', 't'])",
+          "lat": { ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90" },
+          "lng": { ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180" },
+          "prec": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+          "t": { ".validate": "newData.isNumber()" },
+          "usuario": { ".validate": "newData.isString() && newData.val().length <= 60" },
+          "equipo": { ".validate": "newData.isString() && newData.val().length <= 200" },
+          "$otro": { ".validate": false }
+        }
+      }
+    },
+
+    "zonas": {
+      ".read": "auth != null && (root.child('miembros').child(auth.uid).exists() || root.child('admins').child(auth.uid).val() === true)",
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$id": {
+        ".validate": "newData.hasChildren(['nombre', 'estado', 'puntos'])",
+        "nombre": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 80" },
+        "estado": { ".validate": "newData.val() === 'visitada' || newData.val() === 'proxima' || newData.val() === 'pendiente'" },
+        "fecha": { ".validate": "newData.isString() && newData.val().length <= 10" },
+        "nota": { ".validate": "newData.isString() && newData.val().length <= 300" },
+        "puntos": {
+          "$i": {
+            ".validate": "newData.hasChildren(['0', '1'])",
+            "0": { ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90" },
+            "1": { ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180" },
+            "$otro": { ".validate": false }
+          }
+        },
+        "actualizado": { ".validate": "newData.isNumber()" },
+        "$otro": { ".validate": false }
+      }
+    }
+  }
+}

@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Evangelización Izalco</title>
+  <meta name="description" content="Registro de los hermanos enviados y mapa en tiempo real de la evangelización en Izalco.">
+  <meta name="theme-color" content="#123C69">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Evangelización">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <!-- Iconos -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <defs>
+      <symbol id="i-atras" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+      <symbol id="i-mas" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-menos" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+      <symbol id="i-lapiz" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></symbol>
+      <symbol id="i-vivo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2M4.9 19.1a10 10 0 0 1 0-14.2"/></symbol>
+      <symbol id="i-grupo" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+      <symbol id="i-ojo" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+      <symbol id="i-llave" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3L21 2M16 7l3 3M19 4l2 2"/></symbol>
+      <symbol id="i-registro" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 11h6M9 15h4"/></symbol>
+      <symbol id="i-ubicar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></symbol>
+      <symbol id="i-capas" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></symbol>
+      <symbol id="i-zona" viewBox="0 0 24 24"><path d="M5 8l6-4 9 5-2.5 10L6 17z"/></symbol>
+      <symbol id="i-encuadrar" viewBox="0 0 24 24"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></symbol>
+      <symbol id="i-descargar" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+      <symbol id="i-salir" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+      <symbol id="i-basura" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/></symbol>
+      <symbol id="i-mover" viewBox="0 0 24 24"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></symbol>
+      <symbol id="i-lista" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+      <symbol id="i-puntos" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+      <symbol id="i-compartir" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></symbol>
+      <symbol id="i-copiar" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+      <symbol id="i-ruta" viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-7.4 7-12.5A7 7 0 0 0 5 9.5C5 14.6 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+      <symbol id="i-ajustes" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+      <symbol id="i-deshacer" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></symbol>
+      <symbol id="i-cruz" viewBox="0 0 24 24"><path d="M12 2v20M6 8h12"/></symbol>
+      <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-buscar" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+      <symbol id="i-mapa" viewBox="0 0 24 24"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16M16 6v16"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ===================== CARGANDO ===================== -->
+  <section class="pantalla" id="p-cargando" aria-live="polite">
+    <div class="centrado">
+      <div class="emblema emblema-chico" aria-hidden="true"></div>
+      <div class="girando" aria-hidden="true"></div>
+      <p class="suave" id="cargando-texto">Cargando…</p>
+    </div>
+  </section>
+
+  <!-- ===================== INICIO ===================== -->
+  <section class="pantalla" id="p-inicio" hidden>
+    <div class="inicio-cabecera">
+      <div class="emblema" aria-hidden="true"></div>
+      <h1 id="inicio-titulo">Evangelización Izalco</h1>
+      <p id="inicio-subtitulo">Camino Neocatecumenal · Parroquia Nuestra Señora de los Dolores</p>
+    </div>
+    <div class="contenido">
+      <div class="aviso aviso-demo" id="aviso-demo" hidden>
+        <svg class="ico"><use href="#i-info"/></svg>
+        <div><b>Modo demostración.</b> Los datos se guardan solo en este teléfono. Para compartir en tiempo real entre todos, configura Firebase (ver README).</div>
+      </div>
+      <div class="aviso aviso-error" id="aviso-config" hidden>
+        <svg class="ico"><use href="#i-info"/></svg>
+        <div id="aviso-config-texto"></div>
+      </div>
+      <div class="tarjeta sesion-activa" id="inicio-sesion" hidden>
+        <p>Sesión abierta como <b id="inicio-sesion-nombre"></b></p>
+        <div class="fila-botones">
+          <a class="btn" href="#/mapa"><svg class="ico"><use href="#i-mapa"/></svg>Continuar al mapa</a>
+          <button class="btn btn-sec" type="button" data-accion="salir">Cerrar sesión</button>
+        </div>
+      </div>
+      <a class="opcion" href="#/registro" id="op-registro">
+        <span class="opcion-ico"><svg class="ico"><use href="#i-registro"/></svg></span>
+        <span><b>Registrar enviados</b><small>Primera vez: fecha, hermanos enviados y se crea tu usuario</small></span>
+      </a>
+      <a class="opcion" href="#/entrar" id="op-entrar">
+        <span class="opcion-ico"><svg class="ico"><use href="#i-llave"/></svg></span>
+        <span><b>Entrar con mi usuario</b><small>Ya tienen usuario (nombre.apellido)</small></span>
+      </a>
+      <a class="opcion" href="#/ver" id="op-ver">
+        <span class="opcion-ico"><svg class="ico"><use href="#i-ojo"/></svg></span>
+        <span><b>Solo ver el mapa en vivo</b><small>Modo visualizador: dónde están los hermanos ahora</small></span>
+      </a>
+      <a class="opcion opcion-discreta" href="#/admin" id="op-admin">
+        <span class="opcion-ico"><svg class="ico"><use href="#i-escudo"/></svg></span>
+        <span><b>Administrador</b><small>Ver todo y descargar la información</small></span>
+      </a>
+      <p class="pie">Id de dos en dos… «La paz a esta casa» (Lc 10,5)</p>
+    </div>
+  </section>
+
+  <!-- ===================== REGISTRO / NUEVA SALIDA ===================== -->
+  <section class="pantalla" id="p-registro" hidden>
+    <header class="barra-simple">
+      <a class="btn-icono" href="#/" id="registro-volver" aria-label="Volver"><svg class="ico"><use href="#i-atras"/></svg></a>
+      <h1 id="registro-titulo">Registro de enviados</h1>
+    </header>
+    <form class="contenido" id="form-registro" novalidate autocomplete="off">
+      <p class="suave" id="registro-intro">Anota la fecha y a los hermanos que fueron enviados. Al terminar se crea tu usuario para entrar al mapa.</p>
+      <div class="tarjeta">
+        <label class="campo">
+          <span>Fecha de la salida</span>
+          <input type="date" name="fecha" id="reg-fecha" required>
+        </label>
+      </div>
+
+      <h2 class="subtitulo">Enviados</h2>
+      <div id="reg-hermanos"></div>
+
+      <div class="tarjeta">
+        <p class="pregunta" id="reg-cuantos-label">¿Fue solo o con más hermanos?</p>
+        <div class="segmentado" role="radiogroup" aria-labelledby="reg-cuantos-label" id="reg-cuantos">
+          <button type="button" role="radio" data-n="1" aria-checked="false">Fue solo</button>
+          <button type="button" role="radio" data-n="2" aria-checked="true">+1 hermano</button>
+          <button type="button" role="radio" data-n="3" aria-checked="false">+2 hermanos</button>
+        </div>
+      </div>
+
+      <div class="tarjeta" id="reg-caja-usuario">
+        <h2 class="subtitulo-tarjeta">Tu usuario</h2>
+        <p class="suave">Se crea con el <b>primer nombre y apellido</b> del hermano 1:</p>
+        <div class="usuario-vista" id="reg-usuario-vista" aria-live="polite">—</div>
+        <label class="campo">
+          <span>Crea una contraseña (mínimo 6 letras o números)</span>
+          <span class="con-boton">
+            <input type="password" name="clave" id="reg-clave" autocomplete="new-password" minlength="6" required>
+            <button type="button" class="btn-ver-clave" data-ver="reg-clave" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-ojo"/></svg></button>
+          </span>
+        </label>
+        <label class="campo">
+          <span>Repite la contraseña</span>
+          <input type="password" name="clave2" id="reg-clave2" autocomplete="new-password" required>
+        </label>
+      </div>
+      <div class="tarjeta" id="reg-caja-codigo" hidden>
+        <label class="campo">
+          <span>Código de acceso de la comunidad</span>
+          <input name="codigo" id="reg-codigo" autocomplete="off" autocapitalize="none">
+        </label>
+        <p class="pista">Pídelo a los catequistas o al administrador.</p>
+      </div>
+      <p class="error" id="reg-error" role="alert"></p>
+      <button class="btn btn-grande" type="submit" id="reg-enviar">Registrar y crear usuario</button>
+    </form>
+  </section>
+
+  <!-- ===================== REGISTRO LISTO ===================== -->
+  <section class="pantalla" id="p-listo" hidden>
+    <div class="contenido centrado-v">
+      <div class="exito" aria-hidden="true"><svg class="ico"><use href="#i-check"/></svg></div>
+      <h1>¡Registro completado!</h1>
+      <p>Tu usuario es:</p>
+      <div class="usuario-grande" id="listo-usuario"></div>
+      <div class="fila-botones">
+        <button class="btn btn-sec" type="button" id="listo-copiar"><svg class="ico"><use href="#i-copiar"/></svg>Copiar</button>
+        <a class="btn btn-sec" id="listo-whatsapp" target="_blank" rel="noopener"><svg class="ico"><use href="#i-compartir"/></svg>WhatsApp</a>
+      </div>
+      <p class="suave">Guárdalo junto con tu contraseña. Tus hermanos de equipo pueden entrar con este mismo usuario desde su celular.</p>
+      <a class="btn btn-grande" href="#/mapa" id="listo-continuar">Entrar al mapa</a>
+    </div>
+  </section>
+
+  <!-- ===================== ENTRAR ===================== -->
+  <section class="pantalla" id="p-entrar" hidden>
+    <header class="barra-simple">
+      <a class="btn-icono" href="#/" aria-label="Volver"><svg class="ico"><use href="#i-atras"/></svg></a>
+      <h1>Entrar</h1>
+    </header>
+    <form class="contenido" id="form-entrar" novalidate>
+      <div class="tarjeta">
+        <label class="campo">
+          <span>Usuario</span>
+          <input name="usuario" id="ent-usuario" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="nombre.apellido" required>
+        </label>
+        <label class="campo">
+          <span>Contraseña</span>
+          <span class="con-boton">
+            <input type="password" name="clave" id="ent-clave" autocomplete="current-password" required>
+            <button type="button" class="btn-ver-clave" data-ver="ent-clave" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-ojo"/></svg></button>
+          </span>
+        </label>
+        <p class="error" id="ent-error" role="alert"></p>
+        <button class="btn btn-grande" type="submit">Entrar</button>
+      </div>
+      <p class="pista centro">Tu usuario es tu primer nombre y apellido, por ejemplo <b>juan.perez</b>.</p>
+      <p class="centro">¿Primera vez? <a href="#/registro">Registrar enviados</a></p>
+    </form>
+  </section>
+
+  <!-- ===================== VISUALIZADOR (código) ===================== -->
+  <section class="pantalla" id="p-visor" hidden>
+    <header class="barra-simple">
+      <a class="btn-icono" href="#/" aria-label="Volver"><svg class="ico"><use href="#i-atras"/></svg></a>
+      <h1>Modo visualizador</h1>
+    </header>
+    <form class="contenido" id="form-visor" novalidate>
+      <div class="tarjeta">
+        <p>Para ver el mapa en vivo escribe el código de acceso de la comunidad.</p>
+        <label class="campo">
+          <span>Código de acceso</span>
+          <input name="codigo" id="vis-codigo" autocomplete="off" autocapitalize="none" required>
+        </label>
+        <p class="error" id="vis-error" role="alert"></p>
+        <button class="btn btn-grande" type="submit"><svg class="ico"><use href="#i-ojo"/></svg>Ver mapa en vivo</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ===================== ADMIN: ENTRAR ===================== -->
+  <section class="pantalla" id="p-admin-login" hidden>
+    <header class="barra-simple">
+      <a class="btn-icono" href="#/" aria-label="Volver"><svg class="ico"><use href="#i-atras"/></svg></a>
+      <h1>Administrador</h1>
+    </header>
+    <form class="contenido" id="form-admin" novalidate>
+      <div class="tarjeta">
+        <label class="campo">
+          <span id="adm-usuario-etq">Correo del administrador</span>
+          <input name="usuario" id="adm-usuario" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+        </label>
+        <label class="campo">
+          <span>Contraseña</span>
+          <span class="con-boton">
+            <input type="password" name="clave" id="adm-clave" autocomplete="current-password" required>
+            <button type="button" class="btn-ver-clave" data-ver="adm-clave" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-ojo"/></svg></button>
+          </span>
+        </label>
+        <p class="error" id="adm-error" role="alert"></p>
+        <button class="btn btn-grande" type="submit" id="adm-enviar"><svg class="ico"><use href="#i-escudo"/></svg>Entrar como administrador</button>
+      </div>
+      <p class="pista centro" id="adm-pista-demo" hidden>Modo demostración: usuario <b>admin</b>, contraseña <b id="adm-clave-demo">izalco</b>.</p>
+      <p class="centro" id="adm-crear-caja" hidden><button type="button" class="enlace" id="adm-crear">Primera vez: crear la cuenta del administrador</button></p>
+    </form>
+  </section>
+
+  <!-- ===================== CUENTA INCOMPLETA ===================== -->
+  <section class="pantalla" id="p-incompleto" hidden>
+    <header class="barra-simple">
+      <h1>Falta un paso</h1>
+    </header>
+    <div class="contenido">
+      <div class="tarjeta">
+        <p>Entraste como <b id="inc-cuenta"></b>, pero esta cuenta todavía no tiene un equipo registrado ni permisos de administrador.</p>
+        <a class="btn btn-grande" href="#/completar"><svg class="ico"><use href="#i-registro"/></svg>Completar el registro del equipo</a>
+      </div>
+      <div class="tarjeta">
+        <h2 class="subtitulo-tarjeta">¿Eres el administrador?</h2>
+        <p>En la consola de Firebase, abre <b>Realtime Database</b> y agrega dentro de <code>admins</code> esta clave con el valor <code>true</code>:</p>
+        <div class="uid-caja"><code id="inc-uid"></code><button class="btn btn-sec btn-chico" type="button" id="inc-copiar"><svg class="ico"><use href="#i-copiar"/></svg>Copiar</button></div>
+        <button class="btn btn-sec btn-grande" type="button" id="inc-reintentar">Ya lo agregué, reintentar</button>
+      </div>
+      <button class="btn btn-texto" type="button" data-accion="salir"><svg class="ico"><use href="#i-salir"/></svg>Cerrar sesión</button>
+    </div>
+  </section>
+
+  <!-- ===================== ERROR DE ARRANQUE ===================== -->
+  <section class="pantalla" id="p-error" hidden>
+    <div class="contenido centrado-v">
+      <h1>No se pudo abrir la app</h1>
+      <p id="error-texto" class="suave"></p>
+      <button class="btn btn-grande" type="button" onclick="location.reload()">Reintentar</button>
+    </div>
+  </section>
+
+  <!-- ===================== APP PRINCIPAL ===================== -->
+  <section class="pantalla pantalla-app" id="p-app" hidden>
+    <header class="barra-app">
+      <div class="titulo-app">
+        <strong id="app-titulo"></strong>
+        <small id="app-sub"></small>
+      </div>
+      <span class="indicador" id="ind-gps" hidden title="GPS"><svg class="ico"><use href="#i-ubicar"/></svg></span>
+      <span class="indicador red" id="ind-red" title="Conexión"><span class="punto"></span><span class="ind-texto">En línea</span></span>
+      <button class="btn-icono claro" type="button" id="btn-salir-visor" hidden aria-label="Salir del modo visualizador"><svg class="ico"><use href="#i-salir"/></svg></button>
+    </header>
+
+    <main class="app-cuerpo" id="app-cuerpo">
+      <div id="mapa" class="mapa" aria-label="Mapa de Izalco"></div>
+
+      <div class="mapa-arriba">
+        <div class="chips" id="filtro-fecha" role="radiogroup" aria-label="Mostrar círculos de">
+          <button type="button" role="radio" data-f="hoy">Hoy</button>
+          <button type="button" role="radio" data-f="7dias">7 días</button>
+          <button type="button" role="radio" data-f="todo" aria-checked="true">Todo</button>
+        </div>
+      </div>
+      <div class="mapa-controles" id="mapa-controles">
+        <button type="button" class="ctrl" id="btn-zoom-mas" aria-label="Acercar"><svg class="ico"><use href="#i-mas"/></svg></button>
+        <button type="button" class="ctrl" id="btn-zoom-menos" aria-label="Alejar"><svg class="ico"><use href="#i-menos"/></svg></button>
+        <button type="button" class="ctrl" id="btn-ubicarme" aria-label="Mi ubicación"><svg class="ico"><use href="#i-ubicar"/></svg></button>
+        <button type="button" class="ctrl" id="btn-capas" aria-label="Cambiar mapa satélite / calles"><svg class="ico"><use href="#i-capas"/></svg></button>
+        <button type="button" class="ctrl" id="btn-encuadrar" aria-label="Ver todas las zonas"><svg class="ico"><use href="#i-encuadrar"/></svg></button>
+      </div>
+
+      <div class="aviso-mapa" id="aviso-mapa" hidden>
+        <p id="aviso-mapa-texto"></p>
+        <div class="fila-botones" id="aviso-mapa-botones"></div>
+      </div>
+
+      <!-- Barra de círculos (equipo) -->
+      <div class="panel-inferior barra-marcar" id="barra-marcar" hidden>
+        <div class="circulos" id="circulos" role="radiogroup" aria-label="Tipo de círculo"></div>
+        <button type="button" class="btn btn-grande" id="btn-agregar"><svg class="ico"><use href="#i-mas"/></svg>Agregar círculo</button>
+      </div>
+
+      <!-- Panel en vivo -->
+      <div class="panel-inferior panel-vivo" id="panel-vivo" hidden>
+        <button type="button" class="asa" id="asa-vivo" aria-expanded="false" aria-controls="vivo-cuerpo">
+          <span class="asa-linea" aria-hidden="true"></span>
+          <span class="vivo-resumen"><span class="punto-vivo"></span><span><b id="n-linea">0</b> en línea · <b id="n-hoy">0</b> círculos hoy · <b id="n-total">0</b> en total</span></span>
+        </button>
+        <div class="vivo-cuerpo" id="vivo-cuerpo">
+          <h3>Hermanos en línea</h3>
+          <ul class="lista" id="lista-linea"></ul>
+          <h3>Actividad reciente</h3>
+          <ul class="lista" id="lista-actividad"></ul>
+          <h3>Leyenda</h3>
+          <div class="leyenda" id="leyenda"></div>
+        </div>
+      </div>
+
+      <!-- Controles de edición de zonas (administrador) -->
+      <div class="panel-inferior panel-edicion" id="panel-edicion" hidden>
+        <p id="edicion-texto"></p>
+        <div class="fila-botones" id="edicion-botones"></div>
+      </div>
+
+      <!-- Vistas de página completa -->
+      <div class="vista" id="vista-equipo" hidden></div>
+      <div class="vista" id="vista-equipos" hidden></div>
+      <div class="vista" id="vista-visitas" hidden></div>
+      <div class="vista" id="vista-zonas" hidden></div>
+      <div class="vista" id="vista-mas" hidden></div>
+    </main>
+
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Secciones"></nav>
+  </section>
+
+  <!-- Hojas, ventanas y avisos -->
+  <div class="capas-flotantes" id="capas-flotantes"></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <datalist id="lista-parroquias"></datalist>
+  <datalist id="lista-comunidades"></datalist>
+
+  <script src="config.js"></script>
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/datos.js"></script>
+  <script src="js/backend-local.js"></script>
+  <script src="js/backend-firebase.js"></script>
+  <script src="js/mapa.js"></script>
+  <script src="js/exportar.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

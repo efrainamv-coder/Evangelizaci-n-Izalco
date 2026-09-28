@@ -1,0 +1,16 @@
+{
+  "name": "evangelizacion-izalco-pruebas",
+  "private": true,
+  "type": "module",
+  "description": "Pruebas automáticas de la app (Playwright + emuladores de Firebase)",
+  "scripts": {
+    "demo": "node correr.mjs demo",
+    "firebase": "firebase emulators:exec --config ../firebase.json --project demo-izalco --only auth,database \"node correr.mjs reglas firebase\"",
+    "todo": "npm run demo && npm run firebase"
+  },
+  "devDependencies": {
+    "firebase": "12.19.0",
+    "firebase-tools": "^15.31.0",
+    "playwright": "1.56.1"
+  }
+}
