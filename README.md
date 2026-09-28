@@ -76,7 +76,7 @@ firebase: {
 
 ### 7. Crear el administrador
 1. Abre la app → **Administrador**.
-2. Escribe un correo y una contraseña (mínimo 6 caracteres) → toca **Primera vez: crear la cuenta del administrador**.
+2. Escribe un correo y una contraseña (mínimo 6 caracteres) → toca **Crear la cuenta del administrador** (no el botón azul «Entrar», porque la cuenta todavía no existe).
 3. La app muestra un código (UID) → toca **Copiar**.
 4. En Firebase → **Realtime Database → Datos**: pasa el ratón sobre la raíz, toca **+** y agrega:
    - Clave: `admins` → dentro, otro **+** con clave = *el UID copiado* y valor = `true`.

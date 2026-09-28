@@ -655,7 +655,10 @@
       if (s && s.rol === 'admin') ir('mapa', true);
       else enrutar();
     } catch (err) {
-      $('#adm-error').textContent = mensajeError(err);
+      $('#adm-error').textContent =
+        err.codigo === 'credenciales' && est.backend.modo === 'firebase'
+          ? 'Correo o contraseña incorrectos. Si todavía no creaste la cuenta del administrador, toca «Crear la cuenta del administrador» aquí abajo.'
+          : mensajeError(err);
     } finally {
       est.ocupado = false;
       $('#adm-enviar').disabled = false;
@@ -665,7 +668,7 @@
     const correo = $('#adm-usuario').value.trim();
     const clave = $('#adm-clave').value;
     if (!correo.includes('@') || clave.length < 6) {
-      $('#adm-error').textContent = 'Escribe un correo y una contraseña de al menos 6 caracteres; luego toca «crear la cuenta».';
+      $('#adm-error').textContent = 'Escribe arriba un correo y una contraseña de al menos 6 caracteres; luego toca «Crear la cuenta del administrador».';
       return;
     }
     const ok = await confirmar('¿Crear la cuenta del administrador?', `Se creará la cuenta ${correo}. Después tendrás que darle permiso de administrador en la consola de Firebase (te mostraremos cómo).`, { si: 'Crear cuenta' });

@@ -27,6 +27,10 @@ export default async function pruebaFirebase() {
     afirmar(await ADM.p.isVisible('#adm-crear-caja'), 'con Firebase se ofrece crear la cuenta del administrador');
     await ADM.p.fill('#adm-usuario', 'admin@parroquia.org');
     await ADM.p.fill('#adm-clave', 'admin123');
+    // Error típico: tocar «Entrar» antes de crear la cuenta → la app indica qué hacer
+    await ADM.p.click('#adm-enviar');
+    await ADM.p.waitForFunction(() => document.querySelector('#adm-error').textContent.length > 0, null, { timeout: 10000 });
+    afirmar((await ADM.p.textContent('#adm-error')).includes('Crear la cuenta del administrador'), 'si la cuenta aún no existe, el error indica cómo crearla');
     await ADM.p.click('#adm-crear');
     await ADM.p.click('.modal [data-r="si"]');
     await ADM.p.waitForSelector('#p-incompleto:not([hidden])', { timeout: 15000 });
