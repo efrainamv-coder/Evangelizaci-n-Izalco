@@ -8,7 +8,7 @@ App web para el celular que lleva el **registro de los hermanos enviados** y el 
   Cada círculo guarda cuántas personas escucharon y una nota opcional; quien lo puso puede editarlo, moverlo o borrarlo.
 - **En vivo:** todos ven al instante los círculos que van poniendo los demás y **dónde está cada hermano** que tiene la app abierta.
 - **Modo visualizador:** para quien solo quiere observar el mapa en vivo, sin registrarse.
-- **Zonas:** la zona verde (ya visitada) y la naranja (próxima) del 27/09/2026 ya vienen dibujadas; el administrador puede ajustarlas o crear más.
+- **Zonas:** la zona verde (ya visitada) y la naranja (próxima) del 27/09/2026 ya vienen dibujadas, ubicadas con Google Maps; el administrador puede ajustarlas o crear más.
 - **Administrador:** ve todo (equipos, hermanos con sus datos, historial de salidas, círculos, zonas y quién está en línea) y **descarga toda la información**: Excel, mapa para Google Earth / My Maps (KML), CSV, GeoJSON y respaldo JSON.
 
 ---
@@ -84,7 +84,9 @@ firebase: {
 
 La primera vez que entra el administrador se cargan las dos zonas del 27/09/2026 (verde: noreste, visitada; naranja: noroeste, próxima).
 
-> ⚠️ **Las zonas iniciales son aproximadas:** se trazaron a partir de las capturas de Google Maps. En **Zonas → Editar forma** se arrastran las esquinas a las calles correctas, o se arrastra el botón del centro para mover toda la zona.
+> 📍 **Las zonas iniciales** se trazaron sobre la captura de Google Maps y se ubicaron tomando la parroquia como referencia (código de Google Maps `Q82G+7FQ`). Sus bordes norte y oriente llegan hasta donde alcanzaba la captura. Si alguna esquina no coincide con la calle, en **Zonas → Editar forma** se arrastran las esquinas, o el botón del centro para mover toda la zona; **Forma inicial** la devuelve a la forma original.
+>
+> Si el administrador ya había entrado con la primera versión de la app (esas zonas quedaron unos 600 m más al sur), la app las corrige sola la próxima vez que entra el administrador, siempre que nadie haya cambiado su forma.
 
 ### 8. (Opcional) Código de acceso
 En **Descargar → Código de acceso** el administrador puede poner un código (por ejemplo `dolores2026`). Desde ese momento, para registrarse o usar el modo visualizador hay que escribirlo. Los que ya entraron siguen entrando.
@@ -118,7 +120,7 @@ En **Descargar → Código de acceso** el administrador puede poner un código (
 - La ubicación se comparte **solo mientras la app está abierta**. Con la pantalla apagada el teléfono deja de enviarla (por eso existe *Mantener la pantalla encendida*). Si alguien no se actualiza en 3 minutos aparece en gris; a los 15 minutos desaparece del mapa.
 - Si se va la señal, lo que marquen se envía solo cuando vuelva (mientras no cierren la app).
 - En Android (Chrome) y iPhone (Safari → Compartir) se puede **agregar a la pantalla de inicio** para abrirla como una app.
-- Mapas: satélite de Esri y calles de OpenStreetMap (gratuitos, sin clave).
+- Mapas: satélite de Esri y calles de OpenStreetMap (gratuitos, sin clave). Google solo permite mostrar su mapa dentro de otra app con una clave de Google Maps Platform (pide registrar una tarjeta); por eso cada círculo trae el botón **Cómo llegar (Google Maps)**.
 - Plan gratuito de Firebase: hasta 100 personas conectadas al mismo tiempo y 1 GB de datos; para una parroquia alcanza de sobra.
 - ¿Olvidaron la contraseña? Se registra el equipo otra vez (se creará `nombre.apellido2`) o el administrador borra el usuario en *Firebase → Authentication* para volver a crearlo.
 

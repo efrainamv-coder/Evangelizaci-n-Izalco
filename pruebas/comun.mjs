@@ -63,7 +63,7 @@ export async function nuevoContexto(navegador, op = {}) {
     locale: 'es-SV',
     timezoneId: 'America/El_Salvador',
     permissions: op.geo === false ? [] : ['geolocation'],
-    geolocation: op.geo === false ? undefined : op.geo || { latitude: 13.7422, longitude: -89.6728, accuracy: 12 },
+    geolocation: op.geo === false ? undefined : op.geo || { latitude: 13.748, longitude: -89.6741, accuracy: 12 },
     serviceWorkers: 'block',
     acceptDownloads: true
   });

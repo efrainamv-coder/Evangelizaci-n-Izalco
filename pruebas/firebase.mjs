@@ -43,10 +43,10 @@ export default async function pruebaFirebase() {
     await esperarQue(ADM.p, () => Object.keys(IZ.estado.zonas).length === 2, 'al entrar el administrador se cargan las zonas iniciales');
 
     // ---------- 2) Dos equipos, cada uno en su teléfono ----------
-    const A = await abrir('A', { latitude: 13.7425, longitude: -89.6725, accuracy: 10 });
+    const A = await abrir('A', { latitude: 13.7482, longitude: -89.6738, accuracy: 10 });
     await registrar(A.p, { base: BASE, hermanos: [{ nombre: 'Efraín', apellido: 'Martínez', edad: 34, parroquia: 'Nuestra Señora de los Dolores (Izalco)', comunidad: '1ª Comunidad' }, { nombre: 'Juan', apellido: 'López', edad: 29 }] });
     afirmar((await terminarRegistro(A.p)) === 'efrain.martinez', 'equipo A registrado: efrain.martinez');
-    const B = await abrir('B', { latitude: 13.744, longitude: -89.669, accuracy: 15 });
+    const B = await abrir('B', { latitude: 13.7497, longitude: -89.6703, accuracy: 15 });
     await registrar(B.p, { base: BASE, hermanos: [{ nombre: 'Ana', apellido: 'Cruz', edad: 45, parroquia: 'San Antonio', comunidad: '3ª Comunidad' }] });
     afirmar((await terminarRegistro(B.p)) === 'ana.cruz', 'equipo B registrado: ana.cruz');
     const equipos = await dbLeer('equipos');
@@ -59,8 +59,8 @@ export default async function pruebaFirebase() {
     await esperarQue(A.p, () => document.querySelectorAll('.icono-persona').length === 1, 'A ve a B en el mapa (ubicación en vivo)');
     await esperarQue(A.p, () => Object.values(IZ.estado.ubicaciones).some((d) => Object.values(d).some((p) => p.equipo === 'Ana C.')), 'la ubicación en vivo lleva el nombre de los enviados');
     await A.p.screenshot({ path: SALIDA + '/21-equipo-A.png' });
-    await B.ctx.setGeolocation({ latitude: 13.7452, longitude: -89.6701, accuracy: 8 });
-    await esperarQue(A.p, () => Object.values(IZ.estado.ubicaciones).some((d) => Object.values(d).some((p) => Math.abs(p.lat - 13.7452) < 1e-4)), 'cuando B camina, A lo ve moverse', undefined, 15000);
+    await B.ctx.setGeolocation({ latitude: 13.7509, longitude: -89.6712, accuracy: 8 });
+    await esperarQue(A.p, () => Object.values(IZ.estado.ubicaciones).some((d) => Object.values(d).some((p) => Math.abs(p.lat - 13.7509) < 1e-4)), 'cuando B camina, A lo ve moverse', undefined, 15000);
 
     // ---------- 4) Visualizador ----------
     const V = await abrir('V', false);
@@ -94,7 +94,7 @@ export default async function pruebaFirebase() {
     await V2.p.click('#form-visor button[type="submit"]');
     await V2.p.waitForSelector('#p-app:not([hidden])', { timeout: 15000 });
     afirmar(true, 'código correcto: entra al mapa en vivo');
-    const C = await abrir('C', { latitude: 13.7418, longitude: -89.6739, accuracy: 20 });
+    const C = await abrir('C', { latitude: 13.7475, longitude: -89.6752, accuracy: 20 });
     await registrar(C.p, { base: BASE, codigo: 'malo', hermanos: [{ nombre: 'Pedro', apellido: 'Ramos', edad: 50, parroquia: 'Dolores', comunidad: '2ª Comunidad' }] });
     await C.p.waitForFunction(() => document.querySelector('#reg-error').textContent.includes('código'), null, { timeout: 10000 });
     afirmar(true, 'registro con código incorrecto: rechazado');
@@ -160,6 +160,28 @@ export default async function pruebaFirebase() {
     await esperar(1000);
     const despuesZ = (await dbLeer('zonas/zona-1-noreste')).puntos[0];
     afirmar(Math.abs(despuesZ[1] - antesZ[1]) > 1e-5, 'arrastrando el centro se mueve toda la zona');
+    // «Forma inicial»: devuelve una zona inicial a la forma ubicada con Google Maps
+    const mismos = (a, b) => a.length === b.length && a.every((p, i) => Math.abs(p[0] - b[i][0]) < 1e-6 && Math.abs(p[1] - b[i][1]) < 1e-6);
+    const inicial1 = await ADM.p.evaluate(() => IZ.ZONAS_INICIALES.find((z) => z.id === 'zona-1-noreste').puntos);
+    await ADM.p.click('#tabs [data-tab="zonas"]');
+    await ADM.p.click('[data-zona-forma="zona-1-noreste"]');
+    await ADM.p.click('#edicion-botones [data-ed="forma-inicial"]');
+    afirmar(!(await ADM.p.isVisible('#edicion-botones [data-ed="forma-inicial"]')), 'con la forma inicial puesta ya no se ofrece «Forma inicial»');
+    afirmar((await ADM.p.textContent('#edicion-texto')).includes('Guardar forma'), 'el panel explica que falta «Guardar forma»');
+    await ADM.p.screenshot({ path: SALIDA + '/24b-forma-inicial.png' });
+    await ADM.p.click('#edicion-botones [data-ed="guardar-forma"]');
+    await esperar(1000);
+    afirmar(mismos((await dbLeer('zonas/zona-1-noreste')).puntos, inicial1), '«Forma inicial» devuelve la zona a su forma del mapa de Google');
+    // Un Firebase que todavía tiene la zona mal ubicada de la primera versión: se corrige sola
+    const anterior1 = await ADM.p.evaluate(() => IZ.ZONAS_INICIALES_ANTERIORES['zona-1-noreste']);
+    await dbPoner('zonas/zona-1-noreste/puntos', anterior1);
+    await esperarQue(A.p, (lat) => Math.abs(IZ.estado.zonas['zona-1-noreste'].puntos[0][0] - lat) < 1e-6, 'los equipos reciben la zona vieja (simulación)', anterior1[0][0]);
+    afirmar((await ADM.p.evaluate(() => IZ.estado.backend.inicializarZonas())) === 'corregidas', 'la app reconoce la zona mal ubicada de la primera versión');
+    const z1 = await dbLeer('zonas/zona-1-noreste');
+    afirmar(mismos(z1.puntos, inicial1) && z1.nombre === 'Zona 1 · Noreste' && z1.estado === 'visitada', 'la zona se corrige sola y conserva sus datos');
+    afirmar((await dbLeer('zonas/zona-2-noroeste')).estado === 'visitada', 'la corrección no deshace lo que cambió el administrador');
+    afirmar((await ADM.p.evaluate(() => IZ.estado.backend.inicializarZonas())) === false, 'una zona ya corregida o editada no se vuelve a tocar');
+    await esperarQue(A.p, (lat) => Math.abs(IZ.estado.zonas['zona-1-noreste'].puntos[0][0] - lat) < 1e-6, 'los equipos ven al instante la zona corregida', inicial1[0][0]);
     await ADM.p.click('#tabs [data-tab="zonas"]');
     await ADM.p.click('[data-accion="nueva-zona"]');
     await ADM.p.waitForSelector('#panel-edicion:not([hidden])');

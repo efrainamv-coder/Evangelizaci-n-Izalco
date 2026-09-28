@@ -15,7 +15,7 @@
       opciones = opciones || {};
       this.el = elemento;
       this.map = L.map(elemento, {
-        center: opciones.centro || [13.74472, -89.67306],
+        center: opciones.centro || [13.75071, -89.67377],
         zoom: opciones.zoom || 16,
         maxZoom: 21,
         zoomSnap: 0.25,

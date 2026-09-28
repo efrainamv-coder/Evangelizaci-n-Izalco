@@ -3,7 +3,7 @@
  * Siempre intenta primero la versión más nueva (red) y, si no hay señal, usa la copia guardada.
  * Al cambiar archivos de la app, sube el número de VERSION.
  */
-const VERSION = 'izalco-v1';
+const VERSION = 'izalco-v2';
 const ARCHIVOS = [
   './',
   'index.html',

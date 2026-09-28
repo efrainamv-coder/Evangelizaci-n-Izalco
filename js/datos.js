@@ -62,10 +62,12 @@
   };
 
   /*
-   * Zonas iniciales, trazadas a partir de las capturas enviadas (27/09/2026):
-   *  - Verde: al oriente de la Av. Morazán y al norte de la Calle La Libertad (visitada hoy).
+   * Zonas iniciales, trazadas sobre la captura de Google Maps del 27/09/2026 y ubicadas con
+   * la parroquia como referencia (código Q82G+7FQ = 13.7507125, -89.6737656):
+   *  - Verde: al oriente de la Av. Morazán y al norte de la Calle La Libertad (ya visitada).
    *  - Naranja: al poniente de la Av. Morazán y al norte de la Calle La Unión (próximo domingo).
-   * Son APROXIMADAS: el administrador puede ajustarlas en "Zonas → Editar forma".
+   * Los bordes norte y oriente llegan hasta donde alcanzaba la captura; el administrador
+   * puede ajustarlas en «Zonas → Editar forma».
    */
   IZ.ZONAS_INICIALES = [
     {
@@ -75,8 +77,8 @@
       fecha: '2026-09-27',
       nota: 'Oriente de la Av. Morazán, norte de la Calle La Libertad',
       puntos: [
-        [13.748286, -89.671497], [13.748286, -89.665498], [13.738845, -89.665498], [13.738845, -89.66971],
-        [13.740353, -89.674124], [13.744876, -89.672773], [13.745001, -89.672422]
+        [13.753183, -89.672801], [13.753183, -89.667641], [13.745137, -89.667641], [13.745137, -89.671002],
+        [13.746415, -89.675048], [13.750265, -89.673897], [13.75038, -89.673614]
       ]
     },
     {
@@ -86,13 +88,27 @@
       fecha: '2026-10-04',
       nota: 'Poniente de la Av. Morazán, norte de la Calle La Unión',
       puntos: [
-        [13.748411, -89.680132], [13.74837, -89.671869], [13.740436, -89.674262], [13.742744, -89.681887]
+        [13.753183, -89.680226], [13.753183, -89.673148], [13.746468, -89.675221], [13.748464, -89.681705]
       ]
     }
   ];
 
+  /*
+   * Forma con la que la primera versión cargó esas zonas (quedaron unos 600 m al sur).
+   * Solo sirve para reconocerlas: si nadie cambió su forma, la app las corrige sola.
+   */
+  IZ.ZONAS_INICIALES_ANTERIORES = {
+    'zona-1-noreste': [
+      [13.748286, -89.671497], [13.748286, -89.665498], [13.738845, -89.665498], [13.738845, -89.66971],
+      [13.740353, -89.674124], [13.744876, -89.672773], [13.745001, -89.672422]
+    ],
+    'zona-2-noroeste': [
+      [13.748411, -89.680132], [13.74837, -89.671869], [13.740436, -89.674262], [13.742744, -89.681887]
+    ]
+  };
+
   /** Casas de ejemplo (puntos amarillos de la captura). Solo se cargan en el modo demostración. */
   IZ.MARCAS_EJEMPLO = [
-    [13.742891, -89.673145], [13.742548, -89.673265], [13.741946, -89.673447], [13.741556, -89.67364], [13.740894, -89.672347]
+    [13.74859, -89.674175], [13.748313, -89.674293], [13.747779, -89.674449], [13.747451, -89.674603], [13.746891, -89.673488]
   ];
 })();

@@ -238,7 +238,21 @@
     }
     return [lat / puntos.length, lng / puntos.length];
   };
-  u.enlaceMapa = (lat, lng) => `https://www.google.com/maps/search/?api=1&query=${u.redondear(lat, 6)},${u.redondear(lng, 6)}`;
+  /** ¿Dos listas de puntos [[lat, lng], ...] son la misma forma? (Firebase puede devolver objetos en vez de listas) */
+  u.mismosPuntos = (a, b) => {
+    const lista = (x) => (Array.isArray(x) ? x : x && typeof x === 'object' ? Object.values(x) : []);
+    const pa = lista(a), pb = lista(b);
+    return (
+      pa.length > 0 &&
+      pa.length === pb.length &&
+      pa.every((p, i) => {
+        const q = lista(pb[i]);
+        p = lista(p);
+        return Math.abs(p[0] - q[0]) < 1e-6 && Math.abs(p[1] - q[1]) < 1e-6;
+      })
+    );
+  };
+  u.enlaceMapa =(lat, lng) => `https://www.google.com/maps/search/?api=1&query=${u.redondear(lat, 6)},${u.redondear(lng, 6)}`;
 
   // ---------- Varios ----------
   /** Ejecuta fn como máximo una vez cada `ms` (la última llamada pendiente se ejecuta al final). */

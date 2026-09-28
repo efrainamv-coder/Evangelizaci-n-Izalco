@@ -392,10 +392,10 @@ details.historial summary { cursor: pointer; font-weight: 700; color: var(--azul
 .acciones-detalle .btn { flex-direction: column; gap: 4px; min-height: 62px; font-size: 13.5px; padding: 6px; }
 
 .toasts { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--alto-tabs) + var(--panel-alto) + 12px + var(--seguro-abajo)); z-index: 3000; display: flex; flex-direction: column; gap: 8px; width: min(520px, calc(100% - 24px)); pointer-events: none; }
-.toast { background: #17202c; color: #fff; padding: 12px 14px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); display: flex; align-items: center; gap: 10px; pointer-events: auto; animation: subir 0.2s ease-out; font-weight: 600; font-size: 15px; }
+.toast { background: #17202c; color: #fff; padding: 12px 14px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); display: flex; align-items: center; gap: 10px; pointer-events: none; animation: subir 0.2s ease-out; font-weight: 600; font-size: 15px; }
 .toast.error { background: #b71c1c; }
 .toast.ok { background: #1b5e20; }
-.toast button { margin-left: auto; background: none; border: 0; color: #ffd54f; font-weight: 800; padding: 4px 6px; white-space: nowrap; }
+.toast button { margin-left: auto; background: none; border: 0; color: #ffd54f; font-weight: 800; padding: 4px 6px; white-space: nowrap; pointer-events: auto; }
 
 @media (min-width: 700px) {
   .estadisticas { grid-template-columns: repeat(4, 1fr); }
