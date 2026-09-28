@@ -30,13 +30,14 @@ Para que **todos los teléfonos** compartan los datos hay que conectar Firebase 
 2. **Agregar proyecto** → nombre, por ejemplo `evangelizacion-izalco` → puedes desactivar Google Analytics → **Crear proyecto**. El plan gratuito (Spark) alcanza de sobra.
 
 ### 2. Activar el acceso de usuarios
-1. Menú **Compilación → Authentication → Comenzar**.
+1. Menú de la izquierda: **Seguridad → Authentication → Comenzar** (en consolas más antiguas está en *Compilación*).
 2. Pestaña **Método de acceso**:
    - **Correo electrónico/contraseña** → Habilitar (solo el primer interruptor) → Guardar. *(Los usuarios `nombre.apellido` usan este método por dentro.)*
-   - **Anónimo** → Habilitar → Guardar. *(Lo usa el modo visualizador.)*
+   - **Agregar proveedor nuevo → Anónimo** → Habilitar → Guardar. *(Lo usa el modo visualizador.)*
+3. Si Firebase muestra el aviso *«Se recomienda Acceder con Google…»*, ignóralo: la app no usa el acceso con Google. Al final la lista debe mostrar solo **Correo electrónico/contraseña** y **Anónimo**, los dos *Habilitado*.
 
 ### 3. Crear la base de datos en tiempo real
-1. Menú **Compilación → Realtime Database → Crear base de datos**.
+1. Menú de la izquierda: **Bases de datos y almacenamiento → Realtime Database → Crear base de datos** (en consolas más antiguas está en *Compilación*).
 2. Ubicación: **Estados Unidos (us-central1)** → **Comenzar en modo bloqueado** → Habilitar.
 3. Copia la dirección que aparece arriba en la pestaña **Datos** (algo como `https://evangelizacion-izalco-default-rtdb.firebaseio.com`).
 
