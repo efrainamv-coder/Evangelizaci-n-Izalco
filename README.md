@@ -8,7 +8,7 @@ App web para el celular que lleva el **registro de los hermanos enviados** y el 
   Cada círculo guarda cuántas personas escucharon y una nota opcional; quien lo puso puede editarlo, moverlo o borrarlo.
 - **En vivo:** todos ven al instante los círculos que van poniendo los demás y **dónde está cada hermano** que tiene la app abierta.
 - **Modo visualizador:** para quien solo quiere observar el mapa en vivo, sin registrarse.
-- **Zonas:** ya vienen dibujadas las dos zonas de la parroquia de Dolores, divididas por la Av. Morazán y desde la calle de la iglesia hasta la Calle La Unión / La Libertad: la verde (oriente, ya visitada) y la naranja (poniente, próxima); el administrador puede ajustarlas o crear más.
+- **Zonas:** ya vienen dibujadas las dos zonas de la parroquia de Dolores, divididas por la Av. Morazán y desde arriba de la iglesia hasta la Calle La Unión / La Libertad: la verde (oriente, ya visitada) y la naranja (poniente, próxima); el administrador puede ajustarlas o crear más.
 - **Administrador:** ve todo (equipos, hermanos con sus datos, historial de salidas, círculos, zonas y quién está en línea) y **descarga toda la información**: Excel, mapa para Google Earth / My Maps (KML), CSV, GeoJSON y respaldo JSON.
 
 ---
@@ -84,7 +84,7 @@ firebase: {
 
 La primera vez que entra el administrador se cargan las dos zonas iniciales (verde: oriente de la Av. Morazán, visitada; naranja: poniente, próxima).
 
-> 📍 **Las zonas iniciales** siguen las calles de Google Maps y las líneas que marcaron los hermanos: la **Av. Morazán** las divide; el borde norte es la calle de la esquina de la iglesia y el parque, y el sur la **Calle La Unión** (poniente) / **La Libertad** (oriente), de donde no se pasa. Los extremos poniente y oriente vienen de la primera captura. Si alguna esquina no coincide con la calle, en **Zonas → Editar forma** se arrastran las esquinas, o el botón del centro para mover toda la zona; **Forma inicial** la devuelve a la forma original.
+> 📍 **Las zonas iniciales** siguen las calles de Google Maps y las líneas que marcaron los hermanos: la **Av. Morazán** las divide (al norte de la iglesia sigue por la calle del lado poniente de la iglesia); van desde unas tres cuadras arriba de la iglesia hasta la **Calle La Unión** (poniente) / **La Libertad** (oriente), de donde no se pasa. El borde norte y los extremos poniente y oriente vienen de la primera captura. Si alguna esquina no coincide con la calle, en **Zonas → Editar forma** se arrastran las esquinas, o el botón del centro para mover toda la zona; **Forma inicial** la devuelve a la forma original.
 >
 > Si el administrador ya había entrado con una versión anterior de la app, las zonas se ponen al día solas la próxima vez que entra el administrador, siempre que nadie haya cambiado su forma.
 

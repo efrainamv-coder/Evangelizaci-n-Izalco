@@ -63,9 +63,10 @@
 
   /*
    * Zonas iniciales (territorio de la parroquia de Dolores, al norte de la Calle La Unión / La Libertad).
-   * La Av. Morazán las divide; el borde norte es la calle de la esquina de la iglesia y el parque,
-   * y el sur la Calle La Unión (poniente) / La Libertad (oriente). Las calles se tomaron de Google Maps
-   * y de las líneas que marcaron los hermanos; los extremos poniente y oriente, de la primera captura.
+   * La Av. Morazán las divide (al norte de la iglesia sigue por la calle del lado poniente de la iglesia).
+   * Van desde unas tres cuadras arriba de la iglesia (hasta donde llegaba la primera captura) hasta la
+   * Calle La Unión (poniente) / La Libertad (oriente). Las calles se tomaron de Google Maps y de las líneas
+   * que marcaron los hermanos; los extremos poniente y oriente, de la primera captura.
    */
   IZ.ZONAS_INICIALES = [
     {
@@ -73,16 +74,22 @@
       nombre: 'Zona 1 · Noreste',
       estado: 'visitada',
       fecha: '2026-09-27',
-      nota: 'Oriente de la Av. Morazán, desde la calle de la iglesia hasta la Calle La Libertad',
-      puntos: [[13.75057, -89.673918], [13.749057, -89.667641], [13.744084, -89.667641], [13.746427, -89.675117]]
+      nota: 'Oriente de la Av. Morazán, desde arriba de la iglesia hasta la Calle La Libertad',
+      puntos: [
+        [13.753183, -89.673143], [13.753183, -89.667641], [13.744084, -89.667641], [13.746427, -89.675117],
+        [13.75057, -89.673918], [13.751167, -89.67371], [13.751334, -89.6735], [13.752334, -89.673306]
+      ]
     },
     {
       id: 'zona-2-noroeste',
       nombre: 'Zona 2 · Noroeste',
       estado: 'proxima',
       fecha: '2026-10-04',
-      nota: 'Poniente de la Av. Morazán, desde la calle de la iglesia hasta la Calle La Unión',
-      puntos: [[13.75057, -89.673918], [13.752954, -89.680297], [13.748464, -89.681701], [13.746444, -89.675112]]
+      nota: 'Poniente de la Av. Morazán, desde arriba de la iglesia hasta la Calle La Unión',
+      puntos: [
+        [13.753183, -89.680226], [13.753183, -89.673143], [13.752334, -89.673306], [13.751334, -89.6735],
+        [13.751167, -89.67371], [13.75057, -89.673918], [13.746444, -89.675112], [13.748464, -89.681701]
+      ]
     }
   ];
 

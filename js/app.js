@@ -858,7 +858,7 @@
         b.inicializarZonas()
           .then((r) => {
             if (r === 'cargadas') toast('Se cargaron las zonas iniciales.');
-            if (r === 'corregidas') toast('Se actualizaron las zonas iniciales: Av. Morazán, de la iglesia a La Unión / La Libertad.', { tipo: 'ok' });
+            if (r === 'corregidas') toast('Se actualizaron las zonas iniciales: las divide la Av. Morazán, hasta La Unión / La Libertad.', { tipo: 'ok' });
           })
           .catch(() => {});
       }
@@ -1772,7 +1772,7 @@
     const marcas = Object.values(est.marcas || {}).filter(Boolean);
     ponerHTML($('#vista-zonas'),
       `<div class="vista-contenido"><h2>Zonas de evangelización</h2>` +
-      `<div class="aviso aviso-info"><svg class="ico"><use href="#i-info"/></svg><div>Verde = ya se visitó · Naranja = próxima a visitar. Las dos zonas iniciales las divide la Av. Morazán y van desde la calle de la iglesia hasta la Calle La Unión / La Libertad. Si alguna esquina no coincide con la calle, usa <b>Editar forma</b> (también puedes arrastrar toda la zona desde el centro).</div></div>` +
+      `<div class="aviso aviso-info"><svg class="ico"><use href="#i-info"/></svg><div>Verde = ya se visitó · Naranja = próxima a visitar. Las dos zonas iniciales las divide la Av. Morazán y van desde arriba de la iglesia hasta la Calle La Unión / La Libertad. Si alguna esquina no coincide con la calle, usa <b>Editar forma</b> (también puedes arrastrar toda la zona desde el centro).</div></div>` +
       `<button type="button" class="btn btn-grande" data-accion="nueva-zona" style="margin-bottom:14px"><svg class="ico"><use href="#i-mas"/></svg>Nueva zona</button>` +
       (zonas.length
         ? zonas
