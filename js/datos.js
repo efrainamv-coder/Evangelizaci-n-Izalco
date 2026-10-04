@@ -62,12 +62,10 @@
   };
 
   /*
-   * Zonas iniciales, trazadas sobre la captura de Google Maps del 27/09/2026 y ubicadas con
-   * la parroquia como referencia (código Q82G+7FQ = 13.7507125, -89.6737656):
-   *  - Verde: al oriente de la Av. Morazán y al norte de la Calle La Libertad (ya visitada).
-   *  - Naranja: al poniente de la Av. Morazán y al norte de la Calle La Unión (próximo domingo).
-   * Los bordes norte y oriente llegan hasta donde alcanzaba la captura; el administrador
-   * puede ajustarlas en «Zonas → Editar forma».
+   * Zonas iniciales (territorio de la parroquia de Dolores, al norte de la Calle La Unión / La Libertad).
+   * La Av. Morazán las divide; el borde norte es la calle de la esquina de la iglesia y el parque,
+   * y el sur la Calle La Unión (poniente) / La Libertad (oriente). Las calles se tomaron de Google Maps
+   * y de las líneas que marcaron los hermanos; los extremos poniente y oriente, de la primera captura.
    */
   IZ.ZONAS_INICIALES = [
     {
@@ -75,36 +73,51 @@
       nombre: 'Zona 1 · Noreste',
       estado: 'visitada',
       fecha: '2026-09-27',
-      nota: 'Oriente de la Av. Morazán, norte de la Calle La Libertad',
-      puntos: [
-        [13.753183, -89.672801], [13.753183, -89.667641], [13.745137, -89.667641], [13.745137, -89.671002],
-        [13.746415, -89.675048], [13.750265, -89.673897], [13.75038, -89.673614]
-      ]
+      nota: 'Oriente de la Av. Morazán, desde la calle de la iglesia hasta la Calle La Libertad',
+      puntos: [[13.75057, -89.673918], [13.749057, -89.667641], [13.744084, -89.667641], [13.746427, -89.675117]]
     },
     {
       id: 'zona-2-noroeste',
       nombre: 'Zona 2 · Noroeste',
       estado: 'proxima',
       fecha: '2026-10-04',
-      nota: 'Poniente de la Av. Morazán, norte de la Calle La Unión',
-      puntos: [
-        [13.753183, -89.680226], [13.753183, -89.673148], [13.746468, -89.675221], [13.748464, -89.681705]
-      ]
+      nota: 'Poniente de la Av. Morazán, desde la calle de la iglesia hasta la Calle La Unión',
+      puntos: [[13.75057, -89.673918], [13.752954, -89.680297], [13.748464, -89.681701], [13.746444, -89.675112]]
     }
   ];
 
   /*
-   * Forma con la que la primera versión cargó esas zonas (quedaron unos 600 m al sur).
-   * Solo sirve para reconocerlas: si nadie cambió su forma, la app las corrige sola.
+   * Formas y notas con que versiones anteriores de la app cargaron esas zonas.
+   * Solo sirven para reconocerlas: si nadie cambió su forma, la app las pone al día sola.
    */
   IZ.ZONAS_INICIALES_ANTERIORES = {
-    'zona-1-noreste': [
-      [13.748286, -89.671497], [13.748286, -89.665498], [13.738845, -89.665498], [13.738845, -89.66971],
-      [13.740353, -89.674124], [13.744876, -89.672773], [13.745001, -89.672422]
-    ],
-    'zona-2-noroeste': [
-      [13.748411, -89.680132], [13.74837, -89.671869], [13.740436, -89.674262], [13.742744, -89.681887]
-    ]
+    'zona-1-noreste': {
+      notas: ['Oriente de la Av. Morazán, norte de la Calle La Libertad'],
+      formas: [
+        [[13.748286, -89.671497], [13.748286, -89.665498], [13.738845, -89.665498], [13.738845, -89.66971], [13.740353, -89.674124], [13.744876, -89.672773], [13.745001, -89.672422]],
+        [[13.753183, -89.672801], [13.753183, -89.667641], [13.745137, -89.667641], [13.745137, -89.671002], [13.746415, -89.675048], [13.750265, -89.673897], [13.75038, -89.673614]]
+      ]
+    },
+    'zona-2-noroeste': {
+      notas: ['Poniente de la Av. Morazán, norte de la Calle La Unión'],
+      formas: [
+        [[13.748411, -89.680132], [13.74837, -89.671869], [13.740436, -89.674262], [13.742744, -89.681887]],
+        [[13.753183, -89.680226], [13.753183, -89.673148], [13.746468, -89.675221], [13.748464, -89.681705]]
+      ]
+    }
+  };
+
+  /**
+   * Si `guardada` es una zona inicial que conserva una forma anterior (nadie la editó),
+   * devuelve los cambios para ponerla al día ({ puntos, nota? }); si no, null.
+   */
+  IZ.actualizacionZonaInicial = (id, guardada) => {
+    const nueva = IZ.ZONAS_INICIALES.find((z) => z.id === id);
+    const antes = IZ.ZONAS_INICIALES_ANTERIORES[id];
+    if (!nueva || !antes || !guardada || !antes.formas.some((f) => IZ.util.mismosPuntos(guardada.puntos, f))) return null;
+    const cambios = { puntos: nueva.puntos.map((p) => [p[0], p[1]]) };
+    if (!guardada.nota || antes.notas.includes(guardada.nota)) cambios.nota = nueva.nota;
+    return cambios;
   };
 
   /** Casas de ejemplo (puntos amarillos de la captura). Solo se cargan en el modo demostración. */

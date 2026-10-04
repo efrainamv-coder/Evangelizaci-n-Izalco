@@ -8,7 +8,7 @@ App web para el celular que lleva el **registro de los hermanos enviados** y el 
   Cada círculo guarda cuántas personas escucharon y una nota opcional; quien lo puso puede editarlo, moverlo o borrarlo.
 - **En vivo:** todos ven al instante los círculos que van poniendo los demás y **dónde está cada hermano** que tiene la app abierta.
 - **Modo visualizador:** para quien solo quiere observar el mapa en vivo, sin registrarse.
-- **Zonas:** la zona verde (ya visitada) y la naranja (próxima) del 27/09/2026 ya vienen dibujadas, ubicadas con Google Maps; el administrador puede ajustarlas o crear más.
+- **Zonas:** ya vienen dibujadas las dos zonas de la parroquia de Dolores, divididas por la Av. Morazán y desde la calle de la iglesia hasta la Calle La Unión / La Libertad: la verde (oriente, ya visitada) y la naranja (poniente, próxima); el administrador puede ajustarlas o crear más.
 - **Administrador:** ve todo (equipos, hermanos con sus datos, historial de salidas, círculos, zonas y quién está en línea) y **descarga toda la información**: Excel, mapa para Google Earth / My Maps (KML), CSV, GeoJSON y respaldo JSON.
 
 ---
@@ -82,11 +82,11 @@ firebase: {
    - Clave: `admins` → dentro, otro **+** con clave = *el UID copiado* y valor = `true`.
 5. Vuelve a la app → **Ya lo agregué, reintentar**. Listo: entras como administrador.
 
-La primera vez que entra el administrador se cargan las dos zonas del 27/09/2026 (verde: noreste, visitada; naranja: noroeste, próxima).
+La primera vez que entra el administrador se cargan las dos zonas iniciales (verde: oriente de la Av. Morazán, visitada; naranja: poniente, próxima).
 
-> 📍 **Las zonas iniciales** se trazaron sobre la captura de Google Maps y se ubicaron tomando la parroquia como referencia (código de Google Maps `Q82G+7FQ`). Sus bordes norte y oriente llegan hasta donde alcanzaba la captura. Si alguna esquina no coincide con la calle, en **Zonas → Editar forma** se arrastran las esquinas, o el botón del centro para mover toda la zona; **Forma inicial** la devuelve a la forma original.
+> 📍 **Las zonas iniciales** siguen las calles de Google Maps y las líneas que marcaron los hermanos: la **Av. Morazán** las divide; el borde norte es la calle de la esquina de la iglesia y el parque, y el sur la **Calle La Unión** (poniente) / **La Libertad** (oriente), de donde no se pasa. Los extremos poniente y oriente vienen de la primera captura. Si alguna esquina no coincide con la calle, en **Zonas → Editar forma** se arrastran las esquinas, o el botón del centro para mover toda la zona; **Forma inicial** la devuelve a la forma original.
 >
-> Si el administrador ya había entrado con la primera versión de la app (esas zonas quedaron unos 600 m más al sur), la app las corrige sola la próxima vez que entra el administrador, siempre que nadie haya cambiado su forma.
+> Si el administrador ya había entrado con una versión anterior de la app, las zonas se ponen al día solas la próxima vez que entra el administrador, siempre que nadie haya cambiado su forma.
 
 ### 8. (Opcional) Código de acceso
 En **Descargar → Código de acceso** el administrador puede poner un código (por ejemplo `dolores2026`). Desde ese momento, para registrarse o usar el modo visualizador hay que escribirlo. Los que ya entraron siguen entrando.

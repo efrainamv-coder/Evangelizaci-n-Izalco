@@ -46,7 +46,7 @@ export default async function pruebaFirebase() {
     const A = await abrir('A', { latitude: 13.7482, longitude: -89.6738, accuracy: 10 });
     await registrar(A.p, { base: BASE, hermanos: [{ nombre: 'Efraín', apellido: 'Martínez', edad: 34, parroquia: 'Nuestra Señora de los Dolores (Izalco)', comunidad: '1ª Comunidad' }, { nombre: 'Juan', apellido: 'López', edad: 29 }] });
     afirmar((await terminarRegistro(A.p)) === 'efrain.martinez', 'equipo A registrado: efrain.martinez');
-    const B = await abrir('B', { latitude: 13.7497, longitude: -89.6703, accuracy: 15 });
+    const B = await abrir('B', { latitude: 13.7488, longitude: -89.6705, accuracy: 15 });
     await registrar(B.p, { base: BASE, hermanos: [{ nombre: 'Ana', apellido: 'Cruz', edad: 45, parroquia: 'San Antonio', comunidad: '3ª Comunidad' }] });
     afirmar((await terminarRegistro(B.p)) === 'ana.cruz', 'equipo B registrado: ana.cruz');
     const equipos = await dbLeer('equipos');
@@ -59,8 +59,8 @@ export default async function pruebaFirebase() {
     await esperarQue(A.p, () => document.querySelectorAll('.icono-persona').length === 1, 'A ve a B en el mapa (ubicación en vivo)');
     await esperarQue(A.p, () => Object.values(IZ.estado.ubicaciones).some((d) => Object.values(d).some((p) => p.equipo === 'Ana C.')), 'la ubicación en vivo lleva el nombre de los enviados');
     await A.p.screenshot({ path: SALIDA + '/21-equipo-A.png' });
-    await B.ctx.setGeolocation({ latitude: 13.7509, longitude: -89.6712, accuracy: 8 });
-    await esperarQue(A.p, () => Object.values(IZ.estado.ubicaciones).some((d) => Object.values(d).some((p) => Math.abs(p.lat - 13.7509) < 1e-4)), 'cuando B camina, A lo ve moverse', undefined, 15000);
+    await B.ctx.setGeolocation({ latitude: 13.7478, longitude: -89.6716, accuracy: 8 });
+    await esperarQue(A.p, () => Object.values(IZ.estado.ubicaciones).some((d) => Object.values(d).some((p) => Math.abs(p.lat - 13.7478) < 1e-4)), 'cuando B camina, A lo ve moverse', undefined, 15000);
 
     // ---------- 4) Visualizador ----------
     const V = await abrir('V', false);
@@ -171,16 +171,20 @@ export default async function pruebaFirebase() {
     await ADM.p.screenshot({ path: SALIDA + '/24b-forma-inicial.png' });
     await ADM.p.click('#edicion-botones [data-ed="guardar-forma"]');
     await esperar(1000);
-    afirmar(mismos((await dbLeer('zonas/zona-1-noreste')).puntos, inicial1), '«Forma inicial» devuelve la zona a su forma del mapa de Google');
-    // Un Firebase que todavía tiene la zona mal ubicada de la primera versión: se corrige sola
-    const anterior1 = await ADM.p.evaluate(() => IZ.ZONAS_INICIALES_ANTERIORES['zona-1-noreste']);
-    await dbPoner('zonas/zona-1-noreste/puntos', anterior1);
-    await esperarQue(A.p, (lat) => Math.abs(IZ.estado.zonas['zona-1-noreste'].puntos[0][0] - lat) < 1e-6, 'los equipos reciben la zona vieja (simulación)', anterior1[0][0]);
-    afirmar((await ADM.p.evaluate(() => IZ.estado.backend.inicializarZonas())) === 'corregidas', 'la app reconoce la zona mal ubicada de la primera versión');
+    afirmar(mismos((await dbLeer('zonas/zona-1-noreste')).puntos, inicial1), '«Forma inicial» devuelve la zona a su forma inicial');
+    // Un Firebase con zonas de versiones anteriores (sin editar): se ponen al día solas
+    const antes = await ADM.p.evaluate(() => IZ.ZONAS_INICIALES_ANTERIORES);
+    const [nota1, inicial2] = await ADM.p.evaluate(() => [IZ.ZONAS_INICIALES[0].nota, IZ.ZONAS_INICIALES[1].puntos]);
+    await dbPoner('zonas/zona-1-noreste/puntos', antes['zona-1-noreste'].formas[0]);
+    await dbPoner('zonas/zona-1-noreste/nota', antes['zona-1-noreste'].notas[0]);
+    await dbPoner('zonas/zona-2-noroeste/puntos', antes['zona-2-noroeste'].formas[1]);
+    await esperarQue(A.p, (lat) => Math.abs(IZ.estado.zonas['zona-1-noreste'].puntos[0][0] - lat) < 1e-6, 'los equipos reciben la zona vieja (simulación)', antes['zona-1-noreste'].formas[0][0][0]);
+    afirmar((await ADM.p.evaluate(() => IZ.estado.backend.inicializarZonas())) === 'corregidas', 'la app reconoce las zonas de versiones anteriores');
     const z1 = await dbLeer('zonas/zona-1-noreste');
-    afirmar(mismos(z1.puntos, inicial1) && z1.nombre === 'Zona 1 · Noreste' && z1.estado === 'visitada', 'la zona se corrige sola y conserva sus datos');
-    afirmar((await dbLeer('zonas/zona-2-noroeste')).estado === 'visitada', 'la corrección no deshace lo que cambió el administrador');
-    afirmar((await ADM.p.evaluate(() => IZ.estado.backend.inicializarZonas())) === false, 'una zona ya corregida o editada no se vuelve a tocar');
+    afirmar(mismos(z1.puntos, inicial1) && z1.nota === nota1 && z1.nombre === 'Zona 1 · Noreste' && z1.estado === 'visitada', 'la zona se pone al día (forma y nota) y conserva sus datos');
+    const z2 = await dbLeer('zonas/zona-2-noroeste');
+    afirmar(mismos(z2.puntos, inicial2) && z2.estado === 'visitada', 'también desde la segunda versión, sin deshacer lo que cambió el administrador');
+    afirmar((await ADM.p.evaluate(() => IZ.estado.backend.inicializarZonas())) === false, 'una zona ya al día o editada no se vuelve a tocar');
     await esperarQue(A.p, (lat) => Math.abs(IZ.estado.zonas['zona-1-noreste'].puntos[0][0] - lat) < 1e-6, 'los equipos ven al instante la zona corregida', inicial1[0][0]);
     await ADM.p.click('#tabs [data-tab="zonas"]');
     await ADM.p.click('[data-accion="nueva-zona"]');

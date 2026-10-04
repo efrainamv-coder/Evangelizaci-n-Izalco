@@ -402,16 +402,13 @@
             return actuales.exists() ? false : 'cargadas';
           }
           const cambios = {};
-          const anteriores = IZ.ZONAS_INICIALES_ANTERIORES || {};
           await Promise.all(
-            (IZ.ZONAS_INICIALES || [])
-              .filter((z) => anteriores[z.id])
-              .map(async (z) => {
-                const guardados = (await get(ref(db, 'zonas/' + z.id + '/puntos'))).val();
-                if (!u.mismosPuntos(guardados, anteriores[z.id])) return;
-                cambios['zonas/' + z.id + '/puntos'] = z.puntos;
-                cambios['zonas/' + z.id + '/actualizado'] = TS();
-              })
+            (IZ.ZONAS_INICIALES || []).map(async (z) => {
+              const nuevo = IZ.actualizacionZonaInicial(z.id, (await get(ref(db, 'zonas/' + z.id))).val());
+              if (!nuevo) return;
+              Object.keys(nuevo).forEach((k) => (cambios['zonas/' + z.id + '/' + k] = nuevo[k]));
+              cambios['zonas/' + z.id + '/actualizado'] = TS();
+            })
           );
           if (!Object.keys(cambios).length) return false;
           await update(ref(db), cambios);

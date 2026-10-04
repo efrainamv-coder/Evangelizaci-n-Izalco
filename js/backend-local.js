@@ -354,13 +354,11 @@
            las que quedaron con la forma mal ubicada de la primera versión. */
         exigirAdmin();
         db = cargar();
-        const anteriores = IZ.ZONAS_INICIALES_ANTERIORES || {};
         let corregidas = 0;
         (IZ.ZONAS_INICIALES || []).forEach((z) => {
-          const actual = db.zonas[z.id];
-          if (!actual || !anteriores[z.id] || !u.mismosPuntos(actual.puntos, anteriores[z.id])) return;
-          actual.puntos = z.puntos.map((p) => [p[0], p[1]]);
-          actual.actualizado = Date.now();
+          const nuevo = IZ.actualizacionZonaInicial(z.id, db.zonas[z.id]);
+          if (!nuevo) return;
+          Object.assign(db.zonas[z.id], nuevo, { actualizado: Date.now() });
           corregidas++;
         });
         if (!corregidas) return false;
